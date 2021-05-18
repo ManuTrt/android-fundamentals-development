@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">views</string>
+    <string name="usernameMainActivity">username:</string>
+    <string name="passwordMainActivity">password:</string>
+    <string name="loginMainActivity">Login</string>
+    <string name="hintPassMainActivity">Insert min 8 char</string>
+</resources>
