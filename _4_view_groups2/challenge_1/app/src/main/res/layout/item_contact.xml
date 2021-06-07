@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#DD99F199">
+
+    <ImageView
+        android:id="@+id/itemContact_conImg"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_launcher_foreground"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="10dp"
+        />
+
+    <TextView
+        android:id="@+id/itemContact_conName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Just for fun"
+        android:layout_toEndOf="@+id/itemContact_conImg"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:textSize="14sp"
+        />
+
+    <TextView
+        android:id="@+id/itemContact_conPhoneNo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="0723123123"
+        android:layout_toEndOf="@+id/itemContact_conImg"
+        android:layout_below="@+id/itemContact_conName"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:textSize="14sp"
+        />
+</RelativeLayout>

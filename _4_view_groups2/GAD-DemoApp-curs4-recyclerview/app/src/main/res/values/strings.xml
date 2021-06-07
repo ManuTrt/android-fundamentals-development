@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">GAD Demo Application</string>
+    <string name="actMain_Title">My Authenticator</string>
+    <string name="actMain_ButtonLoginText">Login</string>
+    <string name="actMain_InputHintUsername">Username</string>
+    <string name="actMain_InputHintPassword">Password</string>
+</resources>
