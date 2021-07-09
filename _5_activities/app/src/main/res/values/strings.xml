@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">activities</string>
+    <string name="send">send message</string>
 </resources>
