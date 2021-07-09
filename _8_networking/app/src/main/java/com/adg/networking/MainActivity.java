@@ -3,6 +3,9 @@ package com.adg.networking;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.adg.networking.models.Comment;
@@ -48,7 +51,48 @@ public class MainActivity extends AppCompatActivity {
         //getComments();
         //createPost();
         //updatePost();
-        deletePost();
+        //deletePost();
+    }
+
+    public void getPosts(View view) {
+        textViewResult.setText("");
+        getPosts();
+    }
+
+    public void getComments(View view) {
+        textViewResult.setText("");
+        getComments();
+    }
+
+    public void createPost(View view) {
+        textViewResult.setText("");
+        EditText editText = findViewById(R.id.actMain_cPostsEditText);
+
+        String title = editText.getText().toString();
+
+        createPost(new Post(2, title, "GOOD JOB!"));
+        editText.setText("");
+    }
+
+    public void updatePost(View view) {
+        textViewResult.setText("");
+
+        EditText editText = findViewById(R.id.actMain_uPostsEditText);
+        String title = editText.getText().toString();
+
+        updatePost(new Post(2, title, "GOOD JOB!"));
+        editText.setText("");
+    }
+
+    public void deletePost(View view) {
+        textViewResult.setText("");
+
+        EditText editText = findViewById(R.id.actMain_dPostsEditText);
+
+        int id = Integer.parseInt(editText.getText().toString());
+
+        deletePost(id);
+        editText.setText("");
     }
 
     private void getPosts() {
@@ -121,49 +165,16 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void createPost() {
-        Post post = new Post(23, "New Title", "New Text");
+    private void createPost(Post post) {
 
-        //Call<Post> call = jsonPlaceHolderApi.createPost(post);
+        Call<Post> call = jsonPlaceHolderApi.createPost(post);
+
         //Call<Post> call = jsonPlaceHolderApi.createPost(23, "New Title", "New Text");
+
         Map<String, String> fields = new HashMap<>();
         fields.put("userId", "25");
         fields.put("title", "New Title");
-
-        Call<Post> call = jsonPlaceHolderApi.createPost(fields);
-
-        call.enqueue(new Callback<Post>() {
-            @Override
-            public void onResponse(Call<Post> call, Response<Post> response) {
-                if(!response.isSuccessful()) {
-                    textViewResult.setText("Code: " + response.code());
-                    return;
-                }
-
-                Post postResponse = response.body();
-
-                String content = "";
-                content += "Code: " + response.code() + "\n";
-                content += "ID: " + postResponse.getId() + "\n";
-                content += "User ID: " + postResponse.getUserId() + "\n";
-                content += "Title: " + postResponse.getTitle() + "\n";
-                content += "Text: " + postResponse.getText() + "\n\n";
-
-                textViewResult.setText(content);
-            }
-
-            @Override
-            public void onFailure(Call<Post> call, Throwable t) {
-                textViewResult.setText(t.getMessage());
-            }
-        });
-    }
-
-    private void updatePost() {
-        Post post = new Post(12, null, "New Text");
-
-        //Call<Post> call = jsonPlaceHolderApi.putPost(5, post);
-        Call<Post> call = jsonPlaceHolderApi.patchPost(5, post);
+        //Call<Post> call = jsonPlaceHolderApi.createPost(fields);
 
         call.enqueue(new Callback<Post>() {
             @Override
@@ -192,8 +203,40 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void deletePost() {
-        Call<Void> call = jsonPlaceHolderApi.deletePost(5);
+    private void updatePost(Post post) {
+
+        Call<Post> call = jsonPlaceHolderApi.putPost(5, post);
+        //Call<Post> call = jsonPlaceHolderApi.patchPost(5, post);
+
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+                if(!response.isSuccessful()) {
+                    textViewResult.setText("Code: " + response.code());
+                    return;
+                }
+
+                Post postResponse = response.body();
+
+                String content = "";
+                content += "Code: " + response.code() + "\n";
+                content += "ID: " + postResponse.getId() + "\n";
+                content += "User ID: " + postResponse.getUserId() + "\n";
+                content += "Title: " + postResponse.getTitle() + "\n";
+                content += "Text: " + postResponse.getText() + "\n\n";
+
+                textViewResult.setText(content);
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+                textViewResult.setText(t.getMessage());
+            }
+        });
+    }
+
+    private void deletePost(int id) {
+        Call<Void> call = jsonPlaceHolderApi.deletePost(id);
 
         call.enqueue(new Callback<Void>() {
             @Override

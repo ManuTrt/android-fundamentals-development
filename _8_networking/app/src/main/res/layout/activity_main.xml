@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,8 +8,9 @@
     tools:context=".MainActivity">
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/actMain_scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="400dp">
 
     <TextView
         android:id="@+id/actMain_text_view"
@@ -22,4 +23,76 @@
 
     </androidx.core.widget.NestedScrollView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <Button
+        android:id="@+id/actMain_gPostsBtn"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:text="get posts"
+        android:layout_alignBottom="@+id/actMain_scroll_view"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="-60dp"
+        android:onClick="getPosts"/>
+
+    <Button
+        android:id="@+id/actMain_gCommBtn"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:text="get comments"
+        android:layout_alignTop="@+id/actMain_gPostsBtn"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="-55dp"
+        android:onClick="getComments"/>
+
+    <Button
+        android:id="@+id/actMain_cPostsBtn"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:text="create posts"
+        android:layout_alignBottom="@+id/actMain_gCommBtn"
+        android:layout_marginBottom="-55dp"
+        android:layout_alignParentStart="true"
+        android:onClick="createPost"/>
+
+    <EditText
+        android:id="@+id/actMain_cPostsEditText"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:layout_alignBottom="@+id/actMain_cPostsBtn"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="-40dp"/>
+
+    <Button
+        android:id="@+id/actMain_uPostsBtn"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:text="update posts"
+        android:layout_alignBottom="@+id/actMain_gCommBtn"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="-55dp"
+        android:onClick="updatePost"/>
+
+    <EditText
+        android:id="@+id/actMain_uPostsEditText"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:layout_alignBottom="@+id/actMain_uPostsBtn"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="-40dp"/>
+
+    <Button
+        android:id="@+id/actMain_dPostsBtn"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:text="delete posts"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:onClick="deletePost"/>
+
+    <EditText
+        android:id="@+id/actMain_dPostsEditText"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>
