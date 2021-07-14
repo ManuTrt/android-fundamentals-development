@@ -16,5 +16,8 @@ public class ReceiveMessageActivity extends AppCompatActivity {
         TextView tv = findViewById(R.id.actReceiveMsg_msgTextView);
         Intent creationIntent = getIntent();
         tv.setText(creationIntent.getStringExtra("message"));
+
+        creationIntent.putExtra("result", "Worked fine!");
+        setResult(12, creationIntent);
     }
 }
