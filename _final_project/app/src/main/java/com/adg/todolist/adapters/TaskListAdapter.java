@@ -4,6 +4,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 
 public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
-    private ArrayList<Task> tasks;
+    private static ArrayList<Task> tasks;
 
     public TaskListAdapter(ArrayList<Task> tasks) {
         this.tasks = tasks;
@@ -39,13 +40,11 @@ public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return tasks.size();
     }
 
-    public class TaskViewHolder extends RecyclerView.ViewHolder
+    public static class TaskViewHolder extends RecyclerView.ViewHolder
     {
         private CardView taskCardView;
         private CheckBox checkBox;
         private TextView taskTitle;
-
-        private int taskPosition;
 
         public TaskViewHolder(View itemView) {
             super(itemView);
@@ -55,20 +54,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             taskTitle = itemView.findViewById(R.id.task_taskTitle);
 
             TaskStatusOnClickListener taskStatusOnClickListener = new TaskStatusOnClickListener();
-            taskCardView.setOnClickListener(taskStatusOnClickListener);
             checkBox.setOnClickListener(taskStatusOnClickListener);
-
-            taskCardView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-
-                    taskCardView.setCardBackgroundColor(taskCardView.getContext()
-                            .getResources()
-                            .getColor(R.color.white, null));
-
-                    return true;
-                }
-            });
         }
 
         public void update(int position) {
@@ -82,8 +68,6 @@ public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private void updateCardView(Task task) {
             int color;
 
-            Log.d("taskStatus", task.getStatus() == 0 ? "on going" : "done");
-            Log.d("taskType", task.getType() == 0 ? "urgent" : "normal");
             if (task.getStatus() == Task.DONE) {
                 color = taskCardView.getContext()
                         .getResources()
@@ -112,22 +96,12 @@ public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         {
             @Override
             public void onClick(View v) {
-                Task clickedTask = getTask((String) ((TextView)v.findViewById(R.id.task_taskTitle)).getText());
+                Task checkedTask = tasks.get(getBindingAdapterPosition());
 
-                clickedTask.setStatus(1 - clickedTask.getStatus());
+                checkedTask.setStatus(1 - checkedTask.getStatus());
 
-                updateCheckBox(clickedTask);
-                updateCardView(clickedTask);
-            }
-
-            // Find out what task has been clicked
-            private Task getTask(String title) {
-                for (Task t : tasks) {
-                    if (t.getTitle().equals(title)) {
-                        return t;
-                    }
-                }
-                return null;
+                updateCheckBox(checkedTask);
+                updateCardView(checkedTask);
             }
         }
     }
