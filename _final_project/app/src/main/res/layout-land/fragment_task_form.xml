@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
+    android:padding="15dp"
     android:background="@color/app_background_color">
 
     <TextView
@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toEndOf="@+id/fragTaskForm_taskTitleTextView"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="40dp"
         android:layout_marginStart="10dp"
         android:textSize="17sp" />
@@ -37,7 +37,7 @@
     <EditText
         android:id="@+id/fragTaskForm_taskDescriptionEditText"
         android:layout_width="match_parent"
-        android:layout_height="150sp"
+        android:layout_height="100sp"
         android:layout_below="@+id/fragTaskForm_taskDescriptionTextView"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/fragTaskForm_taskDescriptionEditText"
         android:text="Urgent task"
-        android:layout_marginStart="40dp"
+        android:layout_marginStart="60dp"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="15dp"/>
 
@@ -66,9 +66,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/done_task_color"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp"
+        android:layout_alignEnd="@+id/fragTaskForm_taskDescriptionEditText"
+        android:layout_alignBottom="@+id/fragTaskForm_checkBox"
+        android:layout_marginEnd="20dp"
         android:text="Done"/>
 
 </RelativeLayout>

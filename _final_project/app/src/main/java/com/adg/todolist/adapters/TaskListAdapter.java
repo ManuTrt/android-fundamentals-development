@@ -19,9 +19,16 @@ import java.util.ArrayList;
 public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
     private static ArrayList<Task> tasks;
+    private static OnTaskClickListener listener;
 
-    public TaskListAdapter(ArrayList<Task> tasks) {
+    public interface OnTaskClickListener
+    {
+        void onTaskClick(Task task, int position);
+    }
+
+    public TaskListAdapter(ArrayList<Task> tasks, OnTaskClickListener listener) {
         this.tasks = tasks;
+        this.listener = listener;
     }
 
     @Override
@@ -53,8 +60,23 @@ public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             checkBox = itemView.findViewById(R.id.task_checkBox);
             taskTitle = itemView.findViewById(R.id.task_taskTitle);
 
-            TaskStatusOnClickListener taskStatusOnClickListener = new TaskStatusOnClickListener();
-            checkBox.setOnClickListener(taskStatusOnClickListener);
+            checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Task checkedTask = tasks.get(getBindingAdapterPosition());
+
+                    checkedTask.setStatus(1 - checkedTask.getStatus());
+
+                    updateCheckBox(checkedTask);
+                    updateCardView(checkedTask);
+                }
+            });
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onTaskClick(tasks.get(getBindingAdapterPosition()), getBindingAdapterPosition());
+                }
+            });
         }
 
         public void update(int position) {
@@ -90,19 +112,6 @@ public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         private void updateCheckBox(Task task) {
             checkBox.setChecked(task.getStatus() == Task.DONE);
-        }
-
-        public class TaskStatusOnClickListener implements View.OnClickListener
-        {
-            @Override
-            public void onClick(View v) {
-                Task checkedTask = tasks.get(getBindingAdapterPosition());
-
-                checkedTask.setStatus(1 - checkedTask.getStatus());
-
-                updateCheckBox(checkedTask);
-                updateCardView(checkedTask);
-            }
         }
     }
 }

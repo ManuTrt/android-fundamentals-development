@@ -66,4 +66,14 @@ public class Task {
         this.status = status;
     }
     //endregion
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", type=" + type +
+                ", status=" + status +
+                '}';
+    }
 }
