@@ -21,6 +21,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements TaskListFragment.Listener, TaskFormFragment.Listener
@@ -31,21 +32,21 @@ public class MainActivity extends AppCompatActivity implements TaskListFragment.
     public static final String TASK_DATA_KEY = "task";
     public static final String TASK_BINDING_POSITION_KEY = "task_bind_pos";
 
-    public static Gson gson = null;
+    private static Gson gson = null;
+    private int orientation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        int orientation = getResources().getConfiguration().orientation;
+        orientation = getResources().getConfiguration().orientation;
+
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             setFragment(R.id.actMain_frameLayout, new TaskListFragment());
         } else {
             setFragment(R.id.actMain_taskListframeLayout, new TaskListFragment());
-            setFragment(R.id.actMain_taskFormframeLayout, new TaskFormFragment());
         }
-
     }
 
     public static Gson getGson() {
@@ -61,13 +62,20 @@ public class MainActivity extends AppCompatActivity implements TaskListFragment.
         fragmentTransaction.commit();
     }
 
+    private void removeFragment(int containerId) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.remove(Objects.requireNonNull(fragmentManager.findFragmentById(containerId)));
+        fragmentTransaction.commit();
+    }
+
     //region TaskListFragment.Listener method implementations
     @Override
     public void onTaskClicked(Task task, int position) {
         Log.d("taskClicked", task.toString());
 
         TaskFormFragment taskFormFragment = new TaskFormFragment();
-        String taskSerialized = MainActivity.getGson().toJson(task);
+        String taskSerialized = getGson().toJson(task);
 
         Bundle bundle = new Bundle();
 
@@ -76,7 +84,12 @@ public class MainActivity extends AppCompatActivity implements TaskListFragment.
         bundle.putString(TASK_DATA_KEY, taskSerialized);
 
         taskFormFragment.setArguments(bundle);
-        setFragment(R.id.actMain_frameLayout, taskFormFragment);
+
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            setFragment(R.id.actMain_frameLayout, taskFormFragment);
+        } else {
+            setFragment(R.id.actMain_taskFormframeLayout, taskFormFragment);
+        }
     }
 
     @Override
@@ -87,38 +100,11 @@ public class MainActivity extends AppCompatActivity implements TaskListFragment.
         bundle.putInt(ACTION_TYPE_KEY, NEW_TASK);
 
         taskFormFragment.setArguments(bundle);
-        setFragment(R.id.actMain_frameLayout, taskFormFragment);
-    }
-
-    @Override
-    public void saveTaskListFragmentData(ArrayList<Task> taskListArray) {
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-
-        editor.putString(TaskListFragment.RESTORE_TASKLIST_KEY, getGson().toJson(taskListArray));
-        editor.apply();
-
-        Log.d("MainActivity", "TaskListDataSaved");
-        TaskListAdapter.debugTaskPrint(taskListArray);
-    }
-
-    @Override
-    public ArrayList<Task> restoreTaskListFragmentData() {
-        SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
-        String tasksSerialized = sharedPreferences.getString(TaskListFragment.RESTORE_TASKLIST_KEY, "");
-        ArrayList<Task> taskListArray = new ArrayList<>();
-
-        if (!tasksSerialized.equals("")) {
-            Type myType = new TypeToken<ArrayList<Task>>() {}.getType();
-
-            taskListArray = getGson().fromJson(tasksSerialized, myType);
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            setFragment(R.id.actMain_frameLayout, taskFormFragment);
+        } else {
+            setFragment(R.id.actMain_taskFormframeLayout, taskFormFragment);
         }
-
-        Log.d("MainActivity", "TaskListDataRestored");
-
-        TaskListAdapter.debugTaskPrint(taskListArray);
-
-        return taskListArray;
     }
     //endregion
 
@@ -134,7 +120,12 @@ public class MainActivity extends AppCompatActivity implements TaskListFragment.
         bundle.putString(TASK_DATA_KEY, taskSerialized);
 
         taskListFragment.setArguments(bundle);
-        setFragment(R.id.actMain_frameLayout, taskListFragment);
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            setFragment(R.id.actMain_frameLayout, taskListFragment);
+        } else {
+            setFragment(R.id.actMain_taskListframeLayout, taskListFragment);
+            removeFragment(R.id.actMain_taskFormframeLayout);
+        }
     }
 
     @Override
@@ -149,7 +140,12 @@ public class MainActivity extends AppCompatActivity implements TaskListFragment.
         bundle.putString(TASK_DATA_KEY, taskSerialized);
 
         taskListFragment.setArguments(bundle);
-        setFragment(R.id.actMain_frameLayout, taskListFragment);
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            setFragment(R.id.actMain_frameLayout, taskListFragment);
+        } else {
+            setFragment(R.id.actMain_taskListframeLayout, taskListFragment);
+            removeFragment(R.id.actMain_taskFormframeLayout);
+        }
     }
     //endregion
 }

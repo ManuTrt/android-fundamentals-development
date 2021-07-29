@@ -1,11 +1,12 @@
 package com.adg.todolist.adapters;
 
+import android.content.res.ColorStateList;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
@@ -25,6 +26,9 @@ public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public interface OnTaskClickListener
     {
         void onTaskClick(Task task, int position);
+        void onDeleteIconClick(int position);
+        void onAddTaskToDeleteList(Task task);
+        void onRemoveTaskFromDeleteList(Task task);
     }
 
     public static void debugTaskPrint(ArrayList<Task> tasks){
@@ -63,6 +67,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private CardView taskCardView;
         private CheckBox checkBox;
         private TextView taskTitle;
+        private ImageView deleteTaskView;
 
         public TaskViewHolder(View itemView) {
             super(itemView);
@@ -70,6 +75,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             taskCardView = itemView.findViewById(R.id.task_cardView);
             checkBox = itemView.findViewById(R.id.task_checkBox);
             taskTitle = itemView.findViewById(R.id.task_taskTitle);
+            deleteTaskView = itemView.findViewById(R.id.task_deleteIcon);
 
             checkBox.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -82,10 +88,46 @@ public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     updateCardView(checkedTask);
                 }
             });
+            deleteTaskView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onDeleteIconClick(getBindingAdapterPosition());
+                }
+            });
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onTaskClick(tasks.get(getBindingAdapterPosition()), getBindingAdapterPosition());
+                    int taskCardViewColor = taskCardView.getCardBackgroundColor().getDefaultColor();
+                    int white = taskCardView.getContext()
+                            .getResources()
+                            .getColor(R.color.white, null);
+
+                    if (taskCardViewColor != white)
+                        listener.onTaskClick(tasks.get(getBindingAdapterPosition()), getBindingAdapterPosition());
+                }
+            });
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    int taskCardViewColor = taskCardView.getCardBackgroundColor().getDefaultColor();
+                    int white = taskCardView.getContext()
+                            .getResources()
+                            .getColor(R.color.white, null);
+
+                    if (taskCardViewColor == white) {
+                        Task task = tasks.get(getBindingAdapterPosition());
+                        updateCardView(task);
+                        listener.onRemoveTaskFromDeleteList(task);
+                        checkBox.setVisibility(View.VISIBLE);
+                        deleteTaskView.setVisibility(View.VISIBLE);
+                    } else {
+                        taskCardView.setCardBackgroundColor(white);
+                        listener.onAddTaskToDeleteList(tasks.get(getBindingAdapterPosition()));
+                        checkBox.setVisibility(View.GONE);
+                        deleteTaskView.setVisibility(View.GONE);
+                    }
+                    return true;
                 }
             });
         }
@@ -115,6 +157,9 @@ public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         .getColor(R.color.normal_task_color, null);
             }
             taskCardView.setCardBackgroundColor(color);
+
+            checkBox.setVisibility(View.VISIBLE);
+            deleteTaskView.setVisibility(View.VISIBLE);
         }
 
         private void updateTaskTitleTextView(Task task) {

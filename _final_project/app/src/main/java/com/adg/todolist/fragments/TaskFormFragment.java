@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +18,13 @@ import android.widget.EditText;
 import com.adg.todolist.MainActivity;
 import com.adg.todolist.R;
 import com.adg.todolist.models.Task;
+import com.google.gson.Gson;
 
 public class TaskFormFragment extends Fragment
 {
+    public static final int EDIT_TASK = 0;
+    public static final int NEW_TASK = 1;
+
     private int action_type;
 
     private Task task = null;
@@ -58,13 +63,20 @@ public class TaskFormFragment extends Fragment
             @Override
             public void onClick(View v) {
                 String taskTitle = taskTitleET.getText().toString();
-                String taskDescription = taskDescriptionET.getText().toString();
-                int taskUrgency = taskUrgencyCB.isChecked() ? Task.URGENT : Task.NORMAL;
 
-                if (action_type == MainActivity.EDIT_TASK)
-                    listener.onDoneButtonClick(new Task(taskTitle, taskDescription, taskUrgency, task.getStatus()), task_binding_position);
-                else
-                    listener.onDoneButtonClick(new Task(taskTitle, taskDescription, taskUrgency));
+                // Nu putem crea un Task fara nume
+                if (!taskTitle.equals("")) {
+                    String taskDescription = taskDescriptionET.getText().toString();
+                    int taskUrgency = taskUrgencyCB.isChecked() ? Task.URGENT : Task.NORMAL;
+
+                    if (action_type == EDIT_TASK) {
+                        listener.onDoneButtonClick(new Task(taskTitle, taskDescription, taskUrgency, task.getStatus()), task_binding_position);
+                    } else if (action_type == NEW_TASK) {
+                        listener.onDoneButtonClick(new Task(taskTitle, taskDescription, taskUrgency));
+                    }
+
+                    resetForm();
+                }
             }
         });
 
@@ -106,6 +118,18 @@ public class TaskFormFragment extends Fragment
         }
     }
 
+    private void resetForm() {
+        taskTitleET.setText("");
+        taskDescriptionET.setText("");
+        taskUrgencyCB.setChecked(false);
+
+        action_type = -1;
+        task = null;
+        task_binding_position = -1;
+
+        Log.d("TaskForm: ", "Form reseted!");
+    }
+
     private void getBundleArguments() {
         Bundle bundle = this.getArguments();
 
@@ -115,7 +139,7 @@ public class TaskFormFragment extends Fragment
             if (action_type == MainActivity.EDIT_TASK) {
                 String taskSerialized = bundle.getString(MainActivity.TASK_DATA_KEY);
 
-                task = MainActivity.getGson().fromJson(taskSerialized, Task.class);
+                task = new Gson().fromJson(taskSerialized, Task.class);
                 task_binding_position = bundle.getInt(MainActivity.TASK_BINDING_POSITION_KEY);
             }
         }
