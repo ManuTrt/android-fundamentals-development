@@ -79,11 +79,12 @@ public class TaskListFragment extends Fragment
             if (action_type == MainActivity.EDIT_TASK) {
                 int task_binding_position = bundle.getInt(MainActivity.TASK_BINDING_POSITION_KEY);
 
+                Log.d("TaskList-Edited", "task: " + taskSerialized + " bind pos: " + String.valueOf(task_binding_position));
                 taskListArray.set(task_binding_position, task);
             } else {
+                Log.d("TaskList-New", "task: " + taskSerialized);
                 taskListArray.add(task);
             }
-            Log.d("TaskList", "task received: " + taskSerialized);
         }
     }
 

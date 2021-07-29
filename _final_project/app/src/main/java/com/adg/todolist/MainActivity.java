@@ -11,11 +11,14 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.adg.todolist.adapters.TaskListAdapter;
 import com.adg.todolist.fragments.TaskFormFragment;
 import com.adg.todolist.fragments.TaskListFragment;
 import com.adg.todolist.models.Task;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -42,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements TaskListFragment.
             setFragment(R.id.actMain_taskListframeLayout, new TaskListFragment());
             setFragment(R.id.actMain_taskFormframeLayout, new TaskFormFragment());
         }
+
     }
 
     public static Gson getGson() {
@@ -91,31 +95,31 @@ public class MainActivity extends AppCompatActivity implements TaskListFragment.
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
 
-        Set<String> serializedTasks = new LinkedHashSet<>();
-
-        for (Task task : taskListArray)
-            serializedTasks.add(MainActivity.getGson().toJson(task));
-
-        editor.putStringSet(TaskListFragment.RESTORE_TASKLIST_KEY, serializedTasks);
+        editor.putString(TaskListFragment.RESTORE_TASKLIST_KEY, getGson().toJson(taskListArray));
         editor.apply();
+
+        Log.d("MainActivity", "TaskListDataSaved");
+        TaskListAdapter.debugTaskPrint(taskListArray);
     }
 
     @Override
     public ArrayList<Task> restoreTaskListFragmentData() {
         SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
-        Set<String> tasksSerialized = sharedPreferences.getStringSet(TaskListFragment.RESTORE_TASKLIST_KEY, null);
+        String tasksSerialized = sharedPreferences.getString(TaskListFragment.RESTORE_TASKLIST_KEY, "");
         ArrayList<Task> taskListArray = new ArrayList<>();
 
-        if (tasksSerialized != null) {
-            for (String s : tasksSerialized) {
-                Task t = MainActivity.getGson().fromJson(s, Task.class);
-                taskListArray.add(t);
-            }
+        if (!tasksSerialized.equals("")) {
+            Type myType = new TypeToken<ArrayList<Task>>() {}.getType();
+
+            taskListArray = getGson().fromJson(tasksSerialized, myType);
         }
+
+        Log.d("MainActivity", "TaskListDataRestored");
+
+        TaskListAdapter.debugTaskPrint(taskListArray);
 
         return taskListArray;
     }
-
     //endregion
 
     //region TaskFormFragment.Listener method implementations

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.adg.todolist.R;
 import com.adg.todolist.models.Task;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -26,8 +27,18 @@ public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         void onTaskClick(Task task, int position);
     }
 
+    public static void debugTaskPrint(ArrayList<Task> tasks){
+        String s = "Tasks:\n";
+        for (Task t : tasks) {
+            s += "\n" +  new Gson().toJson(t) + "\n";
+
+        }
+        Log.d("TaskAdapter", s);
+    }
+
     public TaskListAdapter(ArrayList<Task> tasks, OnTaskClickListener listener) {
         this.tasks = tasks;
+        debugTaskPrint(this.tasks);
         this.listener = listener;
     }
 
