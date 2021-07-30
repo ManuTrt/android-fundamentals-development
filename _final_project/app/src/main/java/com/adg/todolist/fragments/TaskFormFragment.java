@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -22,30 +21,49 @@ import com.google.gson.Gson;
 
 public class TaskFormFragment extends Fragment
 {
+    /*
+     * Tipurile de actiuni posibile:
+     * editare task si creare task nou
+     */
     public static final int EDIT_TASK = 0;
     public static final int NEW_TASK = 1;
 
+    // Retinem ce fel de actiune are loc
     private int action_type;
 
-    private Task task = null;
-    private int task_binding_position = -1;
+    /*
+     * In cazul modificari unui task
+     * trebuie retinuta pozitia sa din
+     * lista de task-uri pentru a fi ulterior
+     * pus in pozitia corecta
+     */
+    private Task task;
+    private int task_binding_position;
 
-    private Listener listener;
     private EditText taskTitleET;
     private EditText taskDescriptionET;
     private CheckBox taskUrgencyCB;
     private Button doneButton;
 
+    /*
+     * Listener-ul este cel care
+     * va implementa metodele de care
+     * fragmentul are nevoie pentru
+     * a asigura independenta fata de
+     * alte entitati ale aplicatiei
+     */
+    private Listener listener;
+
     public interface Listener
     {
         /*
-         * When a new task is created
-         * this method should be called
+         * Metoda apelata la crearea
+         * unui nou task
          */
         void onDoneButtonClick(Task task);
         /*
-         * When a task is just edited
-         * this method should be called
+         * Metoda apelata dupa ce s-a
+         * modificat un Task existent
          */
         void onDoneButtonClick(Task task, int position);
     }
@@ -64,7 +82,7 @@ public class TaskFormFragment extends Fragment
             public void onClick(View v) {
                 String taskTitle = taskTitleET.getText().toString();
 
-                // Nu putem crea un Task fara nume
+                // Un task fara nume nu se accepta
                 if (!taskTitle.equals("")) {
                     String taskDescription = taskDescriptionET.getText().toString();
                     int taskUrgency = taskUrgencyCB.isChecked() ? Task.URGENT : Task.NORMAL;
@@ -80,6 +98,10 @@ public class TaskFormFragment extends Fragment
             }
         });
 
+        /*
+         * Se populeaza (daca este cazul) campurile cu
+         * datele Task-ului in curs de editare
+         */
         setupTaskFields();
 
         return v;
@@ -90,6 +112,7 @@ public class TaskFormFragment extends Fragment
         super.onAttach(context);
 
         if (context instanceof TaskFormFragment.Listener) {
+            // MainActivity va fi cel care va implementa metodele cerute de fragment
             listener = (TaskFormFragment.Listener) context;
         } else {
             throw new RuntimeException(context.toString() + " must implement TaskFormFragment.Listener ");
@@ -97,16 +120,10 @@ public class TaskFormFragment extends Fragment
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-
-        listener = null;
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Prelucram bundle-ul primit daca este cazul
         getBundleArguments();
     }
 
@@ -143,5 +160,7 @@ public class TaskFormFragment extends Fragment
                 task_binding_position = bundle.getInt(MainActivity.TASK_BINDING_POSITION_KEY);
             }
         }
+
+        setArguments(null);
     }
 }

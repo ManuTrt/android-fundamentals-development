@@ -5,34 +5,36 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.adg.todolist.adapters.TaskListAdapter;
 import com.adg.todolist.fragments.TaskFormFragment;
 import com.adg.todolist.fragments.TaskListFragment;
 import com.adg.todolist.models.Task;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements TaskListFragment.Listener, TaskFormFragment.Listener
 {
+    /*
+     * Actiunile posibile de realizat
+     * intr-un TaskForm: editare si creare task
+     */
     public static final int EDIT_TASK = 0;
     public static final int NEW_TASK = 1;
+    /*
+     * Key-uri pentru preluarea/introducerea din/in Bundle
+     * de date importante pentru un fragment
+     */
     public static final String ACTION_TYPE_KEY = "action_type";
     public static final String TASK_DATA_KEY = "task";
     public static final String TASK_BINDING_POSITION_KEY = "task_bind_pos";
 
+    // Un obiect gson pentru seriazliarea datelor spre transmiterea/stocarea acestora
     private static Gson gson = null;
+    // Orientarea ecranului
     private int orientation;
 
     @Override
@@ -43,8 +45,10 @@ public class MainActivity extends AppCompatActivity implements TaskListFragment.
         orientation = getResources().getConfiguration().orientation;
 
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            Log.d("MainActivity", "New taskListFrag -> PORTRAIT");
             setFragment(R.id.actMain_frameLayout, new TaskListFragment());
         } else {
+            Log.d("MainActivity", "New taskListFrag -> LANDSCAPE");
             setFragment(R.id.actMain_taskListframeLayout, new TaskListFragment());
         }
     }

@@ -6,7 +6,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,23 +25,27 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.Set;
 
 public class TaskListFragment extends Fragment
 {
+    /*
+     * Key-ul folosit pentru stocarea/recuperarea datelor
+     * cu sharedPreferences
+     */
     public static final String RESTORE_TASKLIST_KEY = "restore_tasklist";
 
     private View view;
     private RecyclerView taskListRecyclerView;
     private FloatingActionButton newTaskButton;
     private FloatingActionButton deleteTasksButton;
-    private ArrayList<Task> taskListArray;
-    private Listener listener;
 
+    // Lista task-urilor
+    private ArrayList<Task> taskListArray;
+    // Lista task-urilor ce urmeaza a fi sterse
     private ArrayList<Task> toDeleteTasks;
+
+    private Listener listener;
 
     public interface Listener
     {
@@ -104,6 +107,7 @@ public class TaskListFragment extends Fragment
         Bundle bundle = this.getArguments();
 
         if (bundle != null) {
+            Log.d("TaskList", "WE GOT A BUNDLE");
             int action_type = bundle.getInt(MainActivity.ACTION_TYPE_KEY);
 
             String taskSerialized = bundle.getString(MainActivity.TASK_DATA_KEY);
@@ -119,6 +123,15 @@ public class TaskListFragment extends Fragment
                 taskListArray.add(task);
             }
         }
+
+        // La rotatie, se recreaza fragmentul inaintea
+        // onCreate-ului activity-ului prinicipal,
+        // prin urmare ar fi procesat bundle-ul de 2-ori
+        // astfel ajungand in final sa avem operatii
+        // pe task-uri de acelasi fel (de ex: 2 taskuri nou create
+        // in loc de unul singur). Astfel invalidam bundle-ul dupa
+        // folosire
+        this.setArguments(null);
     }
 
     private void setupNewTaskButton() {
@@ -141,6 +154,7 @@ public class TaskListFragment extends Fragment
         deleteTasksButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Se sterg toate task-urile selectate
                 taskListArray.removeAll(toDeleteTasks);
                 deleteTasksButton.hide();
                 newTaskButton.show();
@@ -179,7 +193,7 @@ public class TaskListFragment extends Fragment
             }
 
             @Override
-            public void onAddTaskToDeleteList(Task task) {
+            public void onSelectTaskToDeletion(Task task) {
                 toDeleteTasks.add(task);
 
                 // Daca este primul task adaugat spre stergere
@@ -191,7 +205,7 @@ public class TaskListFragment extends Fragment
             }
 
             @Override
-            public void onRemoveTaskFromDeleteList(Task task) {
+            public void onDeselectTaskFromDeletion(Task task) {
                 toDeleteTasks.remove(task);
 
                 if (toDeleteTasks.size() == 0) {

@@ -1,6 +1,5 @@
 package com.adg.todolist.adapters;
 
-import android.content.res.ColorStateList;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,17 +26,18 @@ public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     {
         void onTaskClick(Task task, int position);
         void onDeleteIconClick(int position);
-        void onAddTaskToDeleteList(Task task);
-        void onRemoveTaskFromDeleteList(Task task);
+        void onSelectTaskToDeletion(Task task);
+        void onDeselectTaskFromDeletion(Task task);
     }
 
     public static void debugTaskPrint(ArrayList<Task> tasks){
-        String s = "Tasks:\n";
-        for (Task t : tasks) {
-            s += "\n" +  new Gson().toJson(t) + "\n";
+        StringBuilder s = new StringBuilder("Tasks:\n");
 
+        int i =0;
+        for (Task t : tasks) {
+            s.append("\n" + "[").append(i).append("]").append(new Gson().toJson(t)).append("\n");
         }
-        Log.d("TaskAdapter", s);
+        Log.d("TaskAdapter", s.toString());
     }
 
     public TaskListAdapter(ArrayList<Task> tasks, OnTaskClickListener listener) {
@@ -88,12 +88,14 @@ public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     updateCardView(checkedTask);
                 }
             });
+
             deleteTaskView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     listener.onDeleteIconClick(getBindingAdapterPosition());
                 }
             });
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -118,12 +120,12 @@ public class TaskListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     if (taskCardViewColor == white) {
                         Task task = tasks.get(getBindingAdapterPosition());
                         updateCardView(task);
-                        listener.onRemoveTaskFromDeleteList(task);
+                        listener.onDeselectTaskFromDeletion(task);
                         checkBox.setVisibility(View.VISIBLE);
                         deleteTaskView.setVisibility(View.VISIBLE);
                     } else {
                         taskCardView.setCardBackgroundColor(white);
-                        listener.onAddTaskToDeleteList(tasks.get(getBindingAdapterPosition()));
+                        listener.onSelectTaskToDeletion(tasks.get(getBindingAdapterPosition()));
                         checkBox.setVisibility(View.GONE);
                         deleteTaskView.setVisibility(View.GONE);
                     }
